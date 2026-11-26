@@ -89,10 +89,10 @@
 
   <section id="comparison" class="alt">
     <div class="wrap">
-      <h2>Comparison with baselines</h2>
+      <h2>Qualitative Examples</h2>
       <p class="lead">
-        Pick a scene from InterBench. Video models alone can generate external elements such as a hand or a hairdryer,
-        but often miss the physical outcome of the event. Simulation-grounded baselines have to simulate the entire scene,
+        Video models alone can generate external elements, but often miss the physical 
+        outcome of the event. Simulation-grounded baselines have to simulate the entire scene,
         and produce implausible motion or lose the appearance of the input image.
       </p>
       <div class="picker" id="compare-picker" role="tablist" aria-label="Scene"></div>
@@ -101,7 +101,8 @@
     </div>
   </section>
 
-  <section id="more-results">
+  <!-- hidden for now: remove the "hidden" attribute to show this section -->
+  <section id="more-results" hidden>
     <div class="wrap">
       <h2>More results</h2>
       <p class="lead">
@@ -160,7 +161,8 @@
     </div>
   </section>
 
-  <section id="results" class="alt">
+  <!-- hidden for now: remove the "hidden" attribute to show this section -->
+  <section id="results" hidden>
     <div class="wrap">
       <h2>Quantitative results</h2>
       <p class="lead">
@@ -225,8 +227,9 @@
     <div class="wrap">
       <h2>Method</h2>
       <p class="lead">
-        From a single image and a text prompt, a physics simulator and a frozen video model share the dynamics of the scene:
-        the simulator moves the objects it models reliably, and the video model generates everything else.
+        The VLM agent creates a scene plan and iterates over a set of reconstruction and simulation tools
+        to generate a control video of the scene. Our two-phase conditioning then feeds the
+        control signal to the video model but remaims flexible to generate additional elements.
       </p>
       <div>
         <img class="diagram light" src="static/images/pipeline_light.png" alt="InterPlay pipeline: agentic orchestration, reconstruction, simulation and two-phase video conditioning">
@@ -251,12 +254,14 @@
       <p class="prompt">&ldquo;A hand reaches in and grabs the blue book out to the right.&rdquo;</p>
       <div class="grid two narrow" data-sync>
         <figure class="panel">
+          <div class="panel-head"><span class="tag ">Simulation (control video)</span></div>
           <video class="clip" muted playsinline preload="none" poster="static/posters/method/control.jpg" src="static/videos/method/control.mp4"></video>
-          <figcaption><span class="tag ">Simulation (control video)</span> Only the books and blocks are simulated.</figcaption>
+          <figcaption>Only the books and blocks are simulated.</figcaption>
         </figure>
         <figure class="panel">
+          <div class="panel-head"><span class="tag ours">InterPlay</span></div>
           <video class="clip" muted playsinline preload="none" poster="static/posters/method/ours.jpg" src="static/videos/method/ours.mp4"></video>
-          <figcaption><span class="tag ours">InterPlay</span> The video model adds the hand that pulls the book.</figcaption>
+          <figcaption>The video model adds the hand that pulls the book.</figcaption>
         </figure>
       </div>
     </div>
@@ -266,9 +271,9 @@
     <div class="wrap">
       <h2>InterBench</h2>
       <p class="lead">
-        A benchmark of 55 image and prompt pairs (45 distinct images) in which a physical event involves elements that are impossible
-        or costly to simulate, such as human hands, vegetation, mirror reflections and light. The prompt describes only how the event
-        is triggered, not its outcome, so the outcome must be predicted. Click an image to see its prompts.
+        A benchmark of 55 image and prompt pairs in which a physical event involves elements that are impossible
+        or costly to simulate. The prompt describes only how the event
+        is triggered, so the outcome must be predicted. Click an image to see its prompts.
       </p>
       <div class="bench">
         <div class="bench-grid" id="bench-grid"></div>
