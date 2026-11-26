@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InterPlay: Bridging Physical Simulation and Flexible Video Generation</title>
+  <meta name="description" content="InterPlay is a training-free framework in which a physics simulator and a frozen video model share the dynamics of a scene, from only an image and a text prompt.">
+  <meta property="og:title" content="InterPlay: Bridging Physical Simulation and Flexible Video Generation">
+  <meta property="og:description" content="A training-free framework in which a physics simulator and a frozen video model share the dynamics of a scene.">
+  <meta property="og:image" content="static/posters/overview.jpg">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <h1>InterPlay</h1>
+      <p class="subtitle">Bridging Physical Simulation and Flexible Video Generation</p>
+      <!-- TODO: link the author names to personal pages -->
+      <div class="authors">
+        <span>Le&oacute;n Begiristain</span>
+        <span>Adam Kortylewski</span>
+      </div>
+      <p class="affiliation">University of Freiburg, Germany</p>
+      <!-- TODO: add the paper / arXiv / code links and remove the "disabled" class -->
+      <div class="buttons">
+        <a class="btn disabled" href="#">Paper <small>(coming soon)</small></a>
+        <a class="btn disabled" href="#">arXiv <small>(coming soon)</small></a>
+        <a class="btn disabled" href="#">Code <small>(coming soon)</small></a>
+        <a class="btn" href="#bibtex">BibTeX</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="video" style="padding-top: 12px">
+    <div class="wrap">
+      <div class="player">
+        <video class="main-video" controls playsinline preload="metadata" poster="static/posters/overview.jpg">
+          <source src="static/videos/interplay_overview.mp4" type="video/mp4">
+          <track kind="captions" srclang="en" label="English" src="static/captions/interplay_overview.en.vtt">
+        </video>
+        <button class="cc" type="button" aria-pressed="false" title="Subtitles">CC</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="abstract" class="alt">
+    <div class="wrap narrow abstract">
+      <h2>Abstract</h2>
+      <p>
+        We present <b>InterPlay</b>, a training-free framework that bridges the gap between physical accuracy and generative flexibility by letting an agent balance the dynamics between a simulator and a video model.
+        Rather than using the video model as a mere renderer, InterPlay lets it complete the dynamics: the simulator controls objects it models reliably, while the video model fills in everything else, from human motion to complex phenomena and optical effects.
+        A vision-language model (VLM) agent connects the two: it decides which parts of the scene to simulate, supervising both the reconstruction and the scene dynamics with iterative refinements.
+        Using our two-phase conditioning, the frozen video model is anchored to the simulated trajectories, while the rest of the scene remains free to evolve.
+        This division of tasks extends simulation-grounded generation well beyond the simulator's scope. 
+      </p>
+    </div>
+  </section>
+
+  <section id="motivation">
+    <div class="wrap">
+      <h2>Complementary failures</h2>
+      <p class="lead">
+        Video models and simulation-grounded methods fail in complementary ways. Video models produce implausible dynamics,
+        while simulation-grounded methods use the video model as a renderer of the full simulated scene and cannot add
+        elements outside the simulator. InterPlay combines the physical accuracy of the simulation with the flexibility of video models.
+      </p>
+      <p class="prompt"><b>Prompt:</b> &ldquo;A hand slides the blue middle block out sideways.&rdquo;</p>
+      <div class="grid three" data-sync>
+        <figure class="panel">
+          <div class="panel-head"><span class="tag base">Cosmos3-Super</span></div>
+          <video class="clip" muted playsinline preload="none" poster="static/posters/teaser/video_model.jpg" src="static/videos/teaser/video_model.mp4"></video>
+          <figcaption>Video model: the blocks float in mid-air.</figcaption>
+        </figure>
+        <figure class="panel">
+          <div class="panel-head"><span class="tag base">PhysOmni</span></div>
+          <video class="clip" muted playsinline preload="none" poster="static/posters/teaser/sim_grounded.jpg" src="static/videos/teaser/sim_grounded.mp4"></video>
+          <figcaption>Simulation-grounded: no hand, the tower collapses by itself.</figcaption>
+        </figure>
+        <figure class="panel">
+          <div class="panel-head"><span class="tag ours">InterPlay</span></div>
+          <video class="clip" muted playsinline preload="none" poster="static/posters/teaser/ours.jpg" src="static/videos/teaser/ours.mp4"></video>
+          <figcaption>The blocks are simulated, the hand is generated.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="comparison" class="alt">
+    <div class="wrap">
+      <h2>Comparison with baselines</h2>
+      <p class="lead">
+        Pick a scene from InterBench. Video models alone can generate external elements such as a hand or a hairdryer,
+        but often miss the physical outcome of the event. Simulation-grounded baselines have to simulate the entire scene,
+        and produce implausible motion or lose the appearance of the input image.
+      </p>
+      <div class="picker" id="compare-picker" role="tablist" aria-label="Scene"></div>
+      <p class="prompt" id="compare-prompt"></p>
+      <div class="grid four" id="compare-grid" data-sync></div>
+    </div>
+  </section>
+
+  <section id="more-results">
+    <div class="wrap">
+      <h2>More results</h2>
+      <p class="lead">
+        InterPlay handles balance, chain reactions, light, particles and wind, with no training, and from just an image and a prompt.
+      </p>
+      <div class="grid three gallery">
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/balance_block_tower_toycar.jpg" src="static/videos/gallery/balance_block_tower_toycar.mp4"></video>
+          <figcaption>A toy car rolls into a block tower</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/chain_book_domino.jpg" src="static/videos/gallery/chain_book_domino.mp4"></video>
+          <figcaption>A hand tips the first book of a row</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/light_candle_ball.jpg" src="static/videos/gallery/light_candle_ball.mp4"></video>
+          <figcaption>A ball rolls into a lit candle</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/mirror_ball_hand.jpg" src="static/videos/gallery/mirror_ball_hand.mp4"></video>
+          <figcaption>A hand flicks a ball in front of a mirror</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/wind_fan_balls.jpg" src="static/videos/gallery/wind_fan_balls.mp4"></video>
+          <figcaption>A fan switches on next to balls</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/wind_blow_balls_face.jpg" src="static/videos/gallery/wind_blow_balls_face.mp4"></video>
+          <figcaption>A person blows at two balls</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/sliding_mug_table_edge_cat.jpg" src="static/videos/gallery/sliding_mug_table_edge_cat.mp4"></video>
+          <figcaption>A cat pushes a mug toward the table edge</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/particles_sand_ball.jpg" src="static/videos/gallery/particles_sand_ball.mp4"></video>
+          <figcaption>A steel ball falls into sand</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/balance_cup_pyramid_hairdryer.jpg" src="static/videos/gallery/balance_cup_pyramid_hairdryer.mp4"></video>
+          <figcaption>A hairdryer blows at a cup pyramid</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/balance_cardhouse_ball.jpg" src="static/videos/gallery/balance_cardhouse_ball.mp4"></video>
+          <figcaption>A ball rolls into a card house</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/hidden_domino_wall.jpg" src="static/videos/gallery/hidden_domino_wall.mp4"></video>
+          <figcaption>A domino chain continues behind a box</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/gallery/falling_cup_ball_flip.jpg" src="static/videos/gallery/falling_cup_ball_flip.mp4"></video>
+          <figcaption>A hand tilts a cup onto its side</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="alt">
+    <div class="wrap">
+      <h2>Quantitative results</h2>
+      <p class="lead">
+        InterPlay needs only an image and a text prompt and produces a video for every input, which allows a direct comparison
+        with both video generation models and simulation-grounded pipelines.
+      </p>
+      <div class="tables">
+        <div>
+          <div class="table-scroll">
+            <table>
+              <caption>Morpheus</caption>
+              <thead>
+                <tr><th>Method</th><th>Physical &uarr;</th><th>Dynamical &uarr;</th><th>Average &uarr;</th><th>Failure (%) &darr;</th></tr>
+              </thead>
+              <tbody>
+                <tr class="group"><td colspan="5">Video generation models</td></tr>
+                <tr><td>Cosmos3-Super</td><td>0.727</td><td>0.660</td><td>0.693</td><td><b>0.0</b></td></tr>
+                <tr><td>Wan2.2-VACE</td><td>0.675</td><td>0.706</td><td>0.690</td><td>5.1</td></tr>
+                <tr><td>MiniMax-H3</td><td>0.686</td><td><u>0.814</u></td><td><u>0.750</u></td><td>2.0</td></tr>
+                <tr class="group"><td colspan="5">Simulation-grounded models</td></tr>
+                <tr><td>PhysAgent</td><td>0.504</td><td>0.344</td><td>0.424</td><td>35.9</td></tr>
+                <tr><td>RealWonder</td><td><b>0.762</b></td><td>0.404</td><td>0.583</td><td>5.1</td></tr>
+                <tr><td>PhysOmni</td><td>0.561</td><td>0.159</td><td>0.360</td><td>30.8</td></tr>
+                <tr><td>VDAWorld</td><td>0.675</td><td>0.344</td><td>0.509</td><td>28.2</td></tr>
+                <tr class="ours"><td>InterPlay</td><td><u>0.747</u></td><td><b>0.875</b></td><td><b>0.811</b></td><td><b>0.0</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">Failure rate combines the Morpheus discard criteria and failed runs.</p>
+        </div>
+        <div>
+          <div class="table-scroll">
+            <table>
+              <caption>InterBench</caption>
+              <thead>
+                <tr><th>Method</th><th>SA &uarr;</th><th>PC &uarr;</th><th>VQ &uarr;</th><th>Avg &uarr;</th><th>Failure (%) &darr;</th></tr>
+              </thead>
+              <tbody>
+                <tr class="group"><td colspan="6">Video generation models</td></tr>
+                <tr><td>Cosmos3-Super</td><td>2.33</td><td>3.60</td><td><u>3.98</u></td><td>3.30</td><td>&ndash;</td></tr>
+                <tr><td>Wan2.2-VACE</td><td>2.36</td><td>3.39</td><td>3.94</td><td>3.23</td><td>&ndash;</td></tr>
+                <tr><td>MiniMax-H3</td><td><u>2.60</u></td><td><u>3.63</u></td><td><u>3.98</u></td><td><u>3.41</u></td><td>&ndash;</td></tr>
+                <tr class="group"><td colspan="6">Simulation-grounded models</td></tr>
+                <tr><td>PhysAgent</td><td>1.44</td><td>1.59</td><td>2.11</td><td>1.71</td><td>49.3</td></tr>
+                <tr><td>RealWonder</td><td>1.70</td><td>2.05</td><td>3.00</td><td>2.25</td><td><u>8.4</u></td></tr>
+                <tr><td>PhysOmni</td><td>1.51</td><td>2.09</td><td>2.33</td><td>1.98</td><td>19.6</td></tr>
+                <tr><td>VDAWorld</td><td>1.35</td><td>1.67</td><td>1.45</td><td>1.49</td><td>59.6</td></tr>
+                <tr class="ours"><td>InterPlay</td><td><b>3.67</b></td><td><b>3.75</b></td><td><b>4.00</b></td><td><b>3.81</b></td><td><b>0.0</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">VLM-judge metrics on a 1&ndash;5 scale. SA: semantic adherence, PC: physical commonsense, VQ: visual quality.</p>
+        </div>
+      </div>
+      <p class="table-note" style="text-align:center; margin-top: 18px">
+        Best in bold, second best underlined. Inputs beyond the image and the prompt required by RealWonder and PhysOmni are estimated with a VLM.
+      </p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="wrap">
+      <h2>Method</h2>
+      <p class="lead">
+        From a single image and a text prompt, a physics simulator and a frozen video model share the dynamics of the scene:
+        the simulator moves the objects it models reliably, and the video model generates everything else.
+      </p>
+      <div>
+        <img class="diagram light" src="static/images/pipeline_light.png" alt="InterPlay pipeline: agentic orchestration, reconstruction, simulation and two-phase video conditioning">
+        <img class="diagram dark" src="static/images/pipeline_dark.png" alt="" aria-hidden="true">
+      </div>
+      <div class="grid three steps">
+        <div class="step">
+          <h3>Agentic orchestration</h3>
+          <p>A VLM agent reads the image and the prompt and writes a scene plan: which objects to simulate, including objects implied by the prompt but absent from the image, their materials, and the forces that trigger the event.</p>
+        </div>
+        <div class="step">
+          <h3>Reconstruction and simulation</h3>
+          <p>The planned objects are segmented, lifted to 3D and placed at metric scale, then rolled out in the simulator. The agent inspects the reconstruction and the simulated motion, and corrects its estimates in feedback loops.</p>
+        </div>
+        <div class="step">
+          <h3>Two-phase conditioning</h3>
+          <p>The control video of the simulated objects conditions only the first <i>k</i> denoising steps of MiniMax-H3. The remaining steps pin the input frame and its style, leaving the rest of the scene free to evolve.</p>
+        </div>
+      </div>
+
+      <h3 style="text-align:center; margin-top: 40px">Simulated objects in, complete scene out</h3>
+      <p class="prompt">&ldquo;A hand reaches in and grabs the blue book out to the right.&rdquo;</p>
+      <div class="grid two narrow" data-sync>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/method/control.jpg" src="static/videos/method/control.mp4"></video>
+          <figcaption><span class="tag ">Simulation (control video)</span> Only the books and blocks are simulated.</figcaption>
+        </figure>
+        <figure class="panel">
+          <video class="clip" muted playsinline preload="none" poster="static/posters/method/ours.jpg" src="static/videos/method/ours.mp4"></video>
+          <figcaption><span class="tag ours">InterPlay</span> The video model adds the hand that pulls the book.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="interbench" class="alt">
+    <div class="wrap">
+      <h2>InterBench</h2>
+      <p class="lead">
+        A benchmark of 55 image and prompt pairs (45 distinct images) in which a physical event involves elements that are impossible
+        or costly to simulate, such as human hands, vegetation, mirror reflections and light. The prompt describes only how the event
+        is triggered, not its outcome, so the outcome must be predicted. Click an image to see its prompts.
+      </p>
+      <div class="bench">
+        <div class="bench-grid" id="bench-grid"></div>
+        <aside class="bench-detail" id="bench-detail" aria-live="polite">
+          <img id="bench-image" alt="">
+          <div class="bench-meta"><span class="tag" id="bench-category"></span><span id="bench-count"></span></div>
+          <ol id="bench-prompts"></ol>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="wrap narrow">
+      <h2>BibTeX</h2>
+      <!-- TODO: update once the arXiv identifier is known -->
+      <div class="bibtex">
+        <button class="copy" type="button">Copy</button>
+<pre>@article{begiristain2026interplay,
+  title   = {InterPlay: Bridging Physical Simulation and Flexible Video Generation},
+  author  = {Begiristain, Le{\'o}n and Kortylewski, Adam},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">University of Freiburg, Germany</div>
+  </footer>
+
+  <script src="static/js/data.js"></script>
+  <script src="static/js/main.js"></script>
+</body>
+</html>
