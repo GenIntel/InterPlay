@@ -141,16 +141,6 @@
     groups.forEach((g) => io.observe(g));
   }
 
-  // subtitle toggle on the overview video
-  const cc = document.querySelector('.player .cc');
-  const main = document.querySelector('.main-video');
-  if (cc && main && main.textTracks.length) {
-    const track = main.textTracks[0];
-    const sync = () => cc.setAttribute('aria-pressed', track.mode === 'showing');
-    cc.addEventListener('click', () => { track.mode = track.mode === 'showing' ? 'hidden' : 'showing'; sync(); });
-    main.textTracks.addEventListener('change', sync);
-  }
-
   const copy = document.querySelector('.copy');
   if (copy) {
     copy.addEventListener('click', () => {
